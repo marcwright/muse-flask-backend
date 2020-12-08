@@ -48,11 +48,14 @@ def login():
         user_dict = model_to_dict(user) # if you find the User model convert in to a dictionary so you can access it
         if(check_password_hash(user_dict['password'], payload['password'])): # use bcyrpts check password to see if passwords match
             print(user.generate_auth_token())
+            token = user.generate_auth_token().decode('utf-8')
+            
             del user_dict['password'] # delete the password
+
             login_user(user) # setup the session
             print(user, ' this is user')
             print(current_user, ' current user')
-            return jsonify(data=user_dict, status={"code": 200, "message": "Success"}) # respond to the client
+            return jsonify(data={"user": user_dict, "token": token}, status={"code": 200, "message": "Success"}) # respond to the client
         else:
             return jsonify(data={}, status={"code": 401, "message": "Username or Password is incorrect"})
     except models.DoesNotExist:
