@@ -1,5 +1,5 @@
 import models
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 from playhouse.shortcuts import model_to_dict
 
 # first argument is blueprints name
