@@ -47,6 +47,7 @@ def login():
         user = models.User.get(models.User.email== payload['email']) ### Try find the user by thier email
         user_dict = model_to_dict(user) # if you find the User model convert in to a dictionary so you can access it
         if(check_password_hash(user_dict['password'], payload['password'])): # use bcyrpts check password to see if passwords match
+            print(user.generate_auth_token())
             del user_dict['password'] # delete the password
             login_user(user) # setup the session
             print(user, ' this is user')

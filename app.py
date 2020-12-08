@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, g
 from flask_cors import CORS
 from flask_login import LoginManager
+from flask_httpauth import HTTPBasicAuth
 from resources.songs import song
 from resources.user import user
 
@@ -14,6 +15,9 @@ PORT = 8000
 # Initialize an instance of the Flask class.
 # This starts the website!
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
+
+auth = HTTPBasicAuth()
 
 ###################### added these lines
 
@@ -40,6 +44,18 @@ def after_request(response):
     """Close the database connection after each request."""
     g.db.close()
     return response
+
+@app.route('/api/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token(600)
+    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+
+
+@app.route('/api/resource')
+# @auth.login_required
+def get_resource():
+    return jsonify({'data': 'Hello, %s!' % g.user.username})
 
 CORS(song, origins=['http://localhost:3000'], supports_credentials=True) # adding this line
 app.register_blueprint(song, url_prefix='/api/v1/songs') # adding this line
