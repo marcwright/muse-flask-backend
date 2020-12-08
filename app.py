@@ -15,6 +15,7 @@ PORT = 8000
 # Initialize an instance of the Flask class.
 # This starts the website!
 app = Flask(__name__)
+# CORS(app)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 
 auth = HTTPBasicAuth()
@@ -61,7 +62,7 @@ CORS(song, origins=['http://localhost:3000'], supports_credentials=True) # addin
 app.register_blueprint(song, url_prefix='/api/v1/songs') # adding this line
 
 ################## added these lines
-CORS(user, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(user, origins=['*','http://localhost:3000', '*'], supports_credentials=True)
 app.register_blueprint(user, url_prefix='/user')
 ################## added these lines
 
