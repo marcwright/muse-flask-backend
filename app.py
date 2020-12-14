@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, g
 from flask_cors import CORS
-from flask_login import LoginManager
-from flask_httpauth import HTTPBasicAuth
+from flask_login import LoginManager, current_user
+from flask_httpauth import HTTPTokenAuth
 from resources.songs import song
 from resources.user import user
 
@@ -18,7 +18,7 @@ app = Flask(__name__)
 # CORS(app)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 
-auth = HTTPBasicAuth()
+auth = HTTPTokenAuth(scheme='Bearer')
 
 ###################### added these lines
 
@@ -46,6 +46,11 @@ def after_request(response):
     g.db.close()
     return response
 
+@auth.verify_token
+def verify_token(token):
+    print(token, "<--------token")
+    return token
+
 @app.route('/api/token')
 @auth.login_required
 def get_auth_token():
@@ -54,9 +59,9 @@ def get_auth_token():
 
 
 @app.route('/api/resource')
-# @auth.login_required
+@auth.login_required
 def get_resource():
-    return jsonify({'data': 'Hello, %s!' % g.user.username})
+    return jsonify({'data': 'Hello, %s!' %current_user.username})
 
 CORS(song, origins=['http://localhost:3000'], supports_credentials=True) # adding this line
 app.register_blueprint(song, url_prefix='/api/v1/songs') # adding this line

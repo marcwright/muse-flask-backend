@@ -32,7 +32,7 @@ class User(UserMixin, Model):
                               algorithms=['HS256'])
         except:
             return
-        return User.query.get(data['id'])
+        return User.get(data['id'])
 
     class Meta:
         database = DATABASE
